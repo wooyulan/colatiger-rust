@@ -1,13 +1,13 @@
 use serde::Deserialize;
-use std::sync::{OnceLock};
-
-
+use std::{fs::File, io::Read};
+use lazy_static::lazy_static;
 // Web配置
 #[derive(Debug, Clone)]
 #[derive(Deserialize)]
 pub struct WebConfig {
     /// Web服务监听地址
-    pub addr: String,
+    pub name: String,
+    pub version: String,
 }
 
 /// Redis 配置
@@ -28,13 +28,30 @@ pub struct AppConfig {
 }
 
 
-pub fn init_app_config() -> AppConfig {
-    let raw_config = std::fs::read_to_string("config.toml")
-         .expect("Failed to read config.toml");
-     let app_config = toml::from_str::<AppConfig>(&raw_config)
-         .expect("Failed to parse config.toml");
-     app_config
+impl Default for AppConfig {
+    fn default() -> Self {
+
+        let file_path = "config.toml";
+        let mut file = match File::open(file_path) {
+            Ok(f) => f,
+            Err(e) => panic!("no such file {} exception:{}", file_path, e)
+        };
+
+        let mut str_val = String::new();
+        match file.read_to_string(&mut str_val) {
+            Ok(s) => s,
+            Err(e) => panic!("Error Reading file: {}", e)
+        };
+        toml::from_str(&str_val).expect("Parsing the configuration file failed")
+    }
 }
 
-static APP_CONFIG: OnceLock<AppConfig> = OnceLock::new();
-
+impl AppConfig {
+    pub fn get<'a>() -> &'a Self {
+        // 给静态变量延迟赋值的宏
+        lazy_static! {
+            static ref CACHE: AppConfig = AppConfig::default();
+        }
+        &CACHE
+    }
+}

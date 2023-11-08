@@ -3,10 +3,7 @@ use axum::Json;
 
 use crate::Result;
 
+// 健康检查
 pub async fn health() -> impl IntoResponse {
-    let data = Some("I am ok".to_string());
-
-    let response = Result::ok(data);
-
-    Json(response)
+    Json(Result::ok(Some("I am ok".to_string())))
 }
