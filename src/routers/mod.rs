@@ -4,6 +4,7 @@ pub mod health;
 use axum::{Router,routing::get,routing::post};
 
 
+
 // 加载路由
 pub fn load_router() -> Router {
     // 健康检查
@@ -17,6 +18,16 @@ pub fn load_router() -> Router {
     Router::new()
     .nest("/", health_router)
     .nest("/api/v1/", auth_router)
+    
 }
 
 
+
+
+
+
+// 状态共享
+#[derive(Clone)]
+pub struct AppState {
+    pub milvus: String,
+}

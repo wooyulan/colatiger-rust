@@ -10,6 +10,13 @@ pub struct WebConfig {
     pub version: String,
 }
 
+/// 向量库
+#[derive(Deserialize)]
+#[derive(Debug, Clone)]
+pub struct MilvusConfig {
+    pub address: String,
+}
+
 /// Redis 配置
 #[derive(Deserialize)]
 #[derive(Debug, Clone)]
@@ -25,6 +32,7 @@ pub struct RedisConfig {
 pub struct AppConfig {
     pub web: WebConfig,
     pub redis: RedisConfig,
+    pub milvus: MilvusConfig,
 }
 
 
