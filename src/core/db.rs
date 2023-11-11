@@ -1,11 +1,22 @@
 //！数据库初始化
-// use milvus::client::Client;
-// 
-// pub async fn init_milvus_client() -> Client {
 
-//     const URL: &str = "http://localhost:19530";
+use milvus::client::Client;
 
-//     let client = Client::new(URL).await?;
+use crate::config::MilvusConfig;
 
-//     client
-// }
+pub async fn init_milvus_client(conf: MilvusConfig) -> Client {
+    println!("milvus连接信息:{}",conf.address);
+    let client = match Client::new(conf.address).await {
+        Ok(client) =>{
+            println!("Connection to the database is successful!");
+            client
+        }
+        Err(e) =>{
+            println!("Failed to connect to the database: {:?}", e);
+            panic!("Failed to connect to the database for milvus")
+        }
+    };
+    client
+}
+
+

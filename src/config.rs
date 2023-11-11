@@ -1,6 +1,7 @@
 use serde::Deserialize;
 use std::{fs::File, io::Read};
 use lazy_static::lazy_static;
+
 // Web配置
 #[derive(Debug, Clone)]
 #[derive(Deserialize)]
@@ -38,7 +39,6 @@ pub struct AppConfig {
 
 impl Default for AppConfig {
     fn default() -> Self {
-
         let file_path = "config.toml";
         let mut file = match File::open(file_path) {
             Ok(f) => f,

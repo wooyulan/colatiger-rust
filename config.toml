@@ -3,7 +3,7 @@ version = "1.0.0"
 name = "colatiger"
 
 [milvus]
-address = "127.0.0.1:19530"
+address = "http://127.0.0.1:19530"
 
 [redis]
 dsn = "redis://127.0.0.1:6379/"
