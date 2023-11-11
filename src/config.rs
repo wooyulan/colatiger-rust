@@ -9,6 +9,7 @@ pub struct WebConfig {
     /// Web服务监听地址
     pub name: String,
     pub version: String,
+    pub addr: String,
 }
 
 /// 向量库
