@@ -1,7 +1,7 @@
 //！数据库初始化
 
 use milvus::client::Client;
-use crate::config::MilvusConfig;
+use crate::conf::MilvusConfig;
 
 pub async fn init_milvus_client(conf: MilvusConfig) -> Client {
     tracing::debug!("milvus连接信息:{}",conf.address);

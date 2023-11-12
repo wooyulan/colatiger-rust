@@ -1,9 +1,9 @@
 //! 自定义响应状态码
 //! 
-use serde::{Deserialize, Serialize};
+use serde:: Serialize;
 
 
-#[derive(Debug, Clone, Deserialize, Serialize)]
+#[derive(Debug, Serialize)]
 pub struct Result<T:Serialize> {
    pub error_code: i32,
    pub status: String,
@@ -27,6 +27,7 @@ impl<T> Result<T>
         pub fn fail(error_code:i32,message:String){
             Self::new(error_code,"fail".to_string(), message, None);
         }
+
     }
 
 

@@ -1,0 +1,10 @@
+[web]
+version = "1.0.0"
+name = "colatiger"
+addr = "0.0.0.0:4000"
+
+[milvus]
+address = "http://127.0.0.1:19530"
+
+[redis]
+dsn = "redis://127.0.0.1:6379/"

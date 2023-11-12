@@ -3,7 +3,7 @@ pub mod health;
 pub mod milvus;
 
 use axum::{routing::get, routing::post, Router, Extension};
-
+use std::sync::Arc;
 use crate::core::AppState;
 
 // 加载路由
@@ -24,5 +24,5 @@ pub fn load_router(app_state: AppState) -> Router {
         .nest("/", health_router)
         .nest("/open/", auth_router)
         .nest("/api/v1/", bu_router)
-        .layer(Extension(app_state))
+        .layer(Extension(Arc::new(app_state)))
 }
