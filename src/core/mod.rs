@@ -8,6 +8,9 @@ use milvus::client::Client;
 
 use crate::conf::AppConfig;
 
+use crate::middleware::snowflake;
+
+
 // 状态共享
 pub struct AppState {
     pub milvus: Arc<Client>,
@@ -18,6 +21,10 @@ pub struct AppState {
 pub async fn init_db(conf: AppConfig) -> AppState {
     // 初始化milvus
     let milvus_db = db::init_milvus_client(conf.milvus.clone()).await;
+
+    //初始化snowfork
+    snowflake::init_snowflak();
+
    
     AppState {
         milvus: Arc::new(milvus_db),
