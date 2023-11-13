@@ -6,7 +6,7 @@ use crate::conf::AppConfig;
 pub use core::response::Response;
 pub use core::err::Error;
 
-pub type Result<T> = std::result::Result<T, Error>;
+type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[tokio::main]
 async fn main() {
