@@ -1,7 +1,8 @@
 use axum::Json;
 use serde::Deserialize;
 use axum::response::IntoResponse;
-use crate::Result;
+
+use crate::Response;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -16,5 +17,5 @@ pub async fn login(Json(req): Json<LoginRequest>) -> impl IntoResponse {
         req.username, req.password
     ));
 
-    Json(Result::ok(str))
+    Json(Response::ok(str))
 }

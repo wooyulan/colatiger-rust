@@ -12,7 +12,9 @@ config = "0.13.3"
 dotenv = "0.15.0"
 lazy_static = "1.4.0"
 milvus-sdk-rust = "0.1.0"
+rand = "0.8.5"
 serde = {version ="1.0.192",features=["derive"]}
+thiserror = "1.0.50"
 tokio = { version = "1.33.0", features = ["full"] }
 toml = "0.8.8"
 tracing = "0.1.40"

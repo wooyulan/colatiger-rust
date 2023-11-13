@@ -1,5 +1,6 @@
 pub mod response;
 pub mod  db;
+pub mod err;
 
 use std::sync::Arc;
 
@@ -22,4 +23,11 @@ pub async fn init_db(conf: AppConfig) -> AppState {
         milvus: Arc::new(milvus_db),
         confg: Arc::new(conf)
     }
+}
+
+
+
+// 获取 milvus state
+pub fn get_milvus(state:&AppState) -> Arc<milvus::client::Client> {
+    state.milvus.clone()
 }
