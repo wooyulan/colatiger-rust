@@ -18,7 +18,7 @@ pub fn load_router(app_state: AppState) -> Router {
     let bu_router = Router::new()
         // milvus
         .route("/has", get(milvus::test_milvus))
-        .route("/vec/save", get(milvus::insert_pic_vector));
+        .route("/vec/save", post(milvus::insert_pic_vector));
 
     // 加入到全局路由
     Router::new()

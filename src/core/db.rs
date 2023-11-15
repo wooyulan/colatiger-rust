@@ -2,7 +2,6 @@
 
 use crate::conf::MilvusConfig;
 use milvus::client::Client;
-use qdrant_client::prelude::*;
 pub async fn init_milvus_client(conf: MilvusConfig) -> Client {
     tracing::debug!("milvus连接信息:{}", conf.address);
     let client = match Client::new(conf.address).await {

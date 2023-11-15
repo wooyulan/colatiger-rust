@@ -5,7 +5,6 @@ pub mod response;
 use std::sync::Arc;
 
 use milvus::client::Client;
-use qdrant_client::client::QdrantClient;
 
 use crate::conf::AppConfig;
 

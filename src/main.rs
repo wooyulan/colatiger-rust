@@ -2,7 +2,7 @@ mod conf;
 mod core;
 mod llm;
 mod middleware;
-mod models;
+mod req;
 mod routers;
 
 use dotenv::dotenv;
