@@ -33,7 +33,7 @@ pub async fn init_db(conf: AppConfig) -> AppState {
 
 // 获取 milvus state
 pub fn get_milvus(state: &AppState) -> Arc<milvus::client::Client> {
-    state.milvus.clone()
+    state.milvus.to_owned()
 }
 
 
