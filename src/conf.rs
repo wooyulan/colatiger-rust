@@ -1,9 +1,9 @@
+use config::{Config, ConfigError, File};
 use serde::Deserialize;
-use config::{Config, File, ConfigError};
 use std::env;
 
 // Web配置
-#[derive(Debug, Clone,Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct WebConfig {
     /// Web服务监听地址
     pub name: String,
@@ -12,51 +12,41 @@ pub struct WebConfig {
 }
 
 /// 向量库
-#[derive(Debug, Clone,Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct MilvusConfig {
     pub address: String,
 }
 
 /// Redis 配置
-#[derive(Debug,Clone, Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct RedisConfig {
     /// 连接字符串
     pub dsn: String,
 }
 
-
 /// 项目配置
-#[derive(Debug,Clone)]
-#[derive(Deserialize)]
+#[derive(Debug, Clone, Deserialize)]
 pub struct AppConfig {
     pub web: WebConfig,
     pub redis: RedisConfig,
     pub milvus: MilvusConfig,
 }
 
-
 impl AppConfig {
     // 从配置文件中读取配置
-    pub fn new() -> Result<Self,ConfigError>{
-     
+    pub fn new() -> Result<Self, ConfigError> {
         let run_mode = env::var("mode").unwrap_or_else(|_| "dev".into());
-       
-        tracing::info!("start loading {} conf..",run_mode);
+
+        tracing::info!("start loading {} conf..", run_mode);
 
         Config::builder()
-        .add_source(File::with_name("config/default"))
-        .add_source(
-            File::with_name(&format!("config/{}", run_mode))
-                .required(false),
-        )
-        .build().unwrap()
-        .try_deserialize()
+            .add_source(File::with_name("config/default"))
+            .add_source(File::with_name(&format!("config/{}", run_mode)).required(false))
+            .build()
+            .unwrap()
+            .try_deserialize()
     }
 }
-
-
-
-
 
 // impl Default for AppConfig {
 //     fn default() -> Self {

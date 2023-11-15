@@ -1,23 +1,21 @@
 mod conf;
 mod core;
-mod routers;
+mod llm;
 mod middleware;
 mod models;
+mod routers;
 
 use dotenv::dotenv;
 
-
 use crate::conf::AppConfig;
-pub use core::response::Response;
 pub use core::err::Error;
+pub use core::response::Response;
 pub use middleware::snowflake;
-
 
 type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[tokio::main]
 async fn main() {
-    
     dotenv().ok();
 
     // 初始化日志
@@ -29,16 +27,13 @@ async fn main() {
     // 加载配置
     let conf = AppConfig::new().unwrap();
 
-
     // 初始化中间件
-    let app_state =  core::init_db(conf.clone()).await;
- 
+    let app_state = core::init_db(conf.clone()).await;
+
     //加载路由
     let app = routers::load_router(app_state);
 
-
     middleware::snowflake::next_id();
-
 
     tracing::info!(
         "{} 启动成功... 当前版本 {},监听地址 {}",

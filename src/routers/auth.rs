@@ -1,6 +1,6 @@
+use axum::response::IntoResponse;
 use axum::Json;
 use serde::Deserialize;
-use axum::response::IntoResponse;
 
 use crate::Response;
 
@@ -12,7 +12,7 @@ pub struct LoginRequest {
 
 //登录
 pub async fn login(Json(req): Json<LoginRequest>) -> impl IntoResponse {
-   let str =  Some(format!(
+    let str = Some(format!(
         "Created username: {}, password: {}",
         req.username, req.password
     ));

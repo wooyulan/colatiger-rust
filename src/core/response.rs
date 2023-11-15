@@ -1,7 +1,7 @@
 //! 自定义响应状态码
 //!
-use serde::Serialize;
 use axum::Json;
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct Response<T: Serialize> {
@@ -34,7 +34,6 @@ where
     pub fn to_json(self) -> JsonResult<T> {
         Json(self)
     }
-
 }
 
 pub type JsonResult<T> = Json<Response<T>>;

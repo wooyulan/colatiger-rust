@@ -1,6 +1,6 @@
-use snafu::prelude::*;
-use axum::response::IntoResponse;
 use crate::Response;
+use axum::response::IntoResponse;
+use snafu::prelude::*;
 
 #[derive(Debug, Snafu)]
 #[snafu(whatever, display("Error was: {message}"))]
@@ -17,6 +17,3 @@ impl IntoResponse for Error {
             .into_response()
     }
 }
-
-
-
