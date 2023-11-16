@@ -38,4 +38,5 @@
 pub mod init;
 mod health;
 mod vector;
+mod oss;
 

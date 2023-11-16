@@ -1,8 +1,11 @@
 use axum::Router;
 use axum::routing::MethodRouter;
-
 use super::health;
 use super::vector;
+use super::oss;
+
+
+
 
 //构建路由公共方法
 pub fn handle_router(path: String, method_router: MethodRouter) -> Router {
@@ -28,6 +31,8 @@ fn auth_init_router() -> Router {
 fn init_router() -> Router {
     let app = Router::new()
         .merge(health::health()) //健康检查
+        .merge(oss::upload()) // 文件上传
+    
         ;
     return app;
 }
