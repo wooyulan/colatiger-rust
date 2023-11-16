@@ -1,39 +1,31 @@
-mod conf;
-mod core;
-mod llm;
-mod middleware;
-mod req;
-mod routers;
 
-use dotenv::dotenv;
+use dotenv;
+use colatiger::common::conf::{APP_CONFIG, init_config};
+use colatiger::routers;
+use colatiger::db;
 
-use crate::conf::AppConfig;
-pub use core::err::Error;
-pub use core::response::Response;
-pub use middleware::snowflake;
-
-type Result<T, E = Error> = std::result::Result<T, E>;
 
 #[tokio::main]
 async fn main() {
-    dotenv().ok();
+    //初始化环境变量
+    dotenv::dotenv().ok();
 
     // 初始化日志
     tracing_subscriber::fmt()
         .with_max_level(tracing::Level::INFO)
         .init();
 
+    // // 加载配置
+    let conf = APP_CONFIG.get_or_init(|| {init_config()});
 
-    // 加载配置
-    let conf = AppConfig::new().unwrap();
-
-    // 初始化中间件
-    let app_state = core::init_db(conf.clone()).await;
+    // 初始化数据库
+    db::init_db().await;
 
     //加载路由
-    let app = routers::load_router(app_state);
+    let app = routers::init::routers();
 
-    middleware::snowflake::next_id();
+    // middleware::snowflake::next_id();
+
 
     tracing::info!(
         "{} 启动成功... 当前版本 {},监听地址 {}",
@@ -47,3 +39,5 @@ async fn main() {
         .await
         .unwrap();
 }
+
+
