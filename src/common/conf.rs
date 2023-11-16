@@ -4,7 +4,6 @@ use std::env;
 use once_cell::sync::OnceCell;
 
 
-
 // Web配置
 #[derive(Debug, Clone, Deserialize)]
 pub struct WebConfig {
@@ -30,19 +29,18 @@ pub struct RedisConfig {
 /// S3 配置
 #[derive(Debug, Clone, Deserialize)]
 pub struct S3Config {
-    pub endpoint:String,
-    pub access_key:String,
-    pub secret_access_key:String,
-    pub bucket_name :String,
-    pub use_ssl:bool,
+    pub endpoint: String,
+    pub access_key: String,
+    pub secret_access_key: String,
+    pub bucket_name: String,
+    pub use_ssl: bool,
 }
 
 ///db
 #[derive(Debug, Clone, Deserialize)]
 pub struct DbConfig {
-    pub dns:String,
+    pub dns: String,
 }
-
 
 
 /// 项目配置
@@ -52,7 +50,7 @@ pub struct AppConfig {
     pub redis: RedisConfig,
     pub milvus: MilvusConfig,
     pub s3: S3Config,
-    pub db:DbConfig,
+    pub db: DbConfig,
 }
 
 
@@ -76,6 +74,24 @@ pub static APP_CONFIG: OnceCell<AppConfig> = OnceCell::new();
 pub fn get() -> Option<&'static AppConfig> {
     APP_CONFIG.get()
 }
+
+impl AppConfig {
+    pub fn get_db() -> DbConfig{
+        get().unwrap().db.to_owned()
+    }
+    pub fn get_milvus_conf()-> MilvusConfig {
+       get().unwrap().milvus.to_owned()
+    }
+
+    pub fn get_s3_conf()-> S3Config {
+        get().unwrap().s3.to_owned()
+    }
+
+    pub fn get_web_conf()-> WebConfig  {
+        get().unwrap().web.to_owned()
+    }
+}
+
 
 
 

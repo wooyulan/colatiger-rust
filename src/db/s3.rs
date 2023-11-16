@@ -2,7 +2,7 @@ use once_cell::sync::OnceCell;
 use s3::bucket::Bucket;
 use s3::region::Region;
 use s3::creds::Credentials;
-use crate::common::conf::APP_CONFIG;
+use crate::common::conf::AppConfig;
 use std:: pin::Pin;
 use tokio::io::AsyncRead;
 
@@ -10,9 +10,7 @@ pub static S3: OnceCell<Bucket> = OnceCell::new();
 
 pub async fn init_s3() {
 
-   let conf = APP_CONFIG.get().unwrap();
-   let s3 = conf.s3.to_owned();
-
+   let s3 = AppConfig::get_s3_conf();
    let bucket_name = s3.bucket_name.as_str();
    let region = Region::Custom { region: "".into(), endpoint: s3.endpoint.into()  };
    let credentials = Credentials::new(Some(s3.access_key.as_str()), Some(s3.secret_access_key.as_str()), None, None, None).unwrap();

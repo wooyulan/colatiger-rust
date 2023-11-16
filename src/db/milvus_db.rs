@@ -5,7 +5,7 @@ use milvus::error::Error;
 use milvus::index::MetricType;
 use milvus::value::ValueVec;
 use once_cell::sync::OnceCell;
-use crate::common::conf::APP_CONFIG;
+use crate::common::conf::AppConfig;
 use crate::db::snowflake;
 
 pub static MILVUS_CLIENT: OnceCell<Client> = OnceCell::new();
@@ -14,9 +14,8 @@ const DEFAULT_VEC_FIELD: &str = "embed";
 const DEFAULT_KEY_FIELD: &str = "id";
 
 pub async fn init_milvus_client(){
-    let conf = APP_CONFIG.get().unwrap();
-    let url =  conf.milvus.address.as_str();
-    let client = match Client::new(url ).await {
+    let conf = AppConfig::get_milvus_conf();
+    let client = match Client::new(conf.address ).await {
         Ok(client) => {
             tracing::info!("Connection to the milvus is successful!");
             client

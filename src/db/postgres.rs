@@ -2,14 +2,13 @@ use std::time::Duration;
 use once_cell::sync::OnceCell;
 use sea_orm::{ConnectOptions, Database, DatabaseConnection};
 use tracing::log;
-use crate::common::conf::APP_CONFIG;
+use crate::common::conf::AppConfig;
 
 
 pub static DB: OnceCell<DatabaseConnection> = OnceCell::new();
 pub async fn init_postgres(){
-    let conf = APP_CONFIG.get().unwrap();
-    let  dbconf = conf.db.to_owned();
-    let mut opt = ConnectOptions::new(dbconf.dns.as_str());
+    let conf = AppConfig::get_db();
+    let mut opt = ConnectOptions::new(conf.dns);
     opt.max_connections(100)
         .min_connections(5)
         .connect_timeout(Duration::from_secs(8))
