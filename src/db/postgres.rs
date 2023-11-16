@@ -21,3 +21,5 @@ pub async fn init_postgres(){
     let db = Database::connect(opt).await.unwrap();
     DB.set(db).unwrap()
 }
+
+pub fn get_conn() -> Option<&'static DatabaseConnection> { DB.get() }

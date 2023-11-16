@@ -1,6 +1,6 @@
 use axum::Router;
 use axum::routing::MethodRouter;
-use super::health;
+use super::{auth, health};
 use super::vector;
 use super::oss;
 
@@ -22,6 +22,7 @@ pub fn routers() -> Router {
 //需要权限认证的路由
 fn auth_init_router() -> Router {
     let app = Router::new()
+        .merge(auth::auth_router()) // 认证模块
         .merge(vector::vector_router()) // 向量模块
         ;
     return app;
