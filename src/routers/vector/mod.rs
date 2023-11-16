@@ -5,4 +5,4 @@ mod service;
 mod http_client;
 
 //
-pub use api::{emb_img,search_img};
+pub use api::vector_router;

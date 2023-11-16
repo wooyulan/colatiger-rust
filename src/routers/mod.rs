@@ -19,6 +19,7 @@
 //
 //     // 业务路由
 //     let bu_router = Router::new()
+//.
 //         // milvus
 //         .route("/search-pic", get(milvus::search_pic))
 //         .route("/embed/pic", post(milvus::insert_pic_vector))

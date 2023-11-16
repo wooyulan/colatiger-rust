@@ -11,5 +11,5 @@ use super::handler::health_check;
 //注册
 pub fn health() -> Router {
     //构建注册路由
-    handle_router("/", get(health_check))
+    handle_router("/".to_string(), get(health_check))
 }
