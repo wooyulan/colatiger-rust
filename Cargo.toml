@@ -7,7 +7,9 @@ edition = "2021"
 
 [dependencies]
 axum = { version = "0.6.20" ,features = ["multipart"]}
+axum-extra = "0.8.0"
 axum-valid = "0.11.0"
+chrono = "0.4.31"
 config = "0.13.3"
 dotenv = "0.15.0"
 futures = "0.3.29"
