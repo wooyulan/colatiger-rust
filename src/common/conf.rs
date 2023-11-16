@@ -27,12 +27,25 @@ pub struct RedisConfig {
     pub dsn: String,
 }
 
+/// S3 配置
+#[derive(Debug, Clone, Deserialize)]
+pub struct S3Config {
+    pub endpoint:String,
+    pub access_key:String,
+    pub secret_access_key:String,
+    pub bucket_name :String,
+    pub use_ssl:bool,
+}
+
+
+
 /// 项目配置
 #[derive(Debug, Clone, Deserialize)]
 pub struct AppConfig {
     pub web: WebConfig,
     pub redis: RedisConfig,
     pub milvus: MilvusConfig,
+    pub s3: S3Config,
 }
 
 

@@ -1,0 +1,24 @@
+use once_cell::sync::OnceCell;
+use s3::bucket::Bucket;
+use s3::region::Region;
+use s3::creds::Credentials;
+use crate::common::conf::APP_CONFIG;
+
+pub static S3: OnceCell<Bucket> = OnceCell::new();
+
+pub async fn init_s3() {
+
+   let conf = APP_CONFIG.get().unwrap();
+   let s3 = conf.s3.to_owned();
+
+   let bucket_name = s3.bucket_name.as_str();
+   let region = Region::Custom { region: "".into(), endpoint: s3.endpoint.into()  };
+   let credentials = Credentials::new(Some(s3.access_key.as_str()), Some(s3.secret_access_key.as_str()), None, None, None).unwrap();
+   let bucket = Bucket::new(bucket_name, region, credentials).unwrap().with_path_style();
+
+   let _= S3.set(bucket).is_ok();
+   tracing::info!("Connection to the s3 is successful!");
+}
+
+pub fn get_s3_bucket() -> Option<&'static Bucket> { S3.get() }
+

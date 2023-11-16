@@ -6,8 +6,8 @@ use super::vector;
 
 //构建路由公共方法
 pub fn handle_router(path: &str, method_router: MethodRouter) -> Router {
-    let path = "/api/v1".to_owned() + &path.to_string();
-    Router::new().route(path.as_str(), method_router)
+   // let path = "/api/v1".to_owned() + path.to_string();
+    Router::new().route(path, method_router)
 }
 
 //api

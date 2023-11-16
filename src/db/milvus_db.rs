@@ -16,7 +16,6 @@ const DEFAULT_KEY_FIELD: &str = "id";
 pub async fn init_milvus_client(){
     let conf = APP_CONFIG.get().unwrap();
     let url =  conf.milvus.address.as_str();
-    tracing::info!("milvus连接信息:{}", url);
     let client = match Client::new(url ).await {
         Ok(client) => {
             tracing::info!("Connection to the milvus is successful!");
