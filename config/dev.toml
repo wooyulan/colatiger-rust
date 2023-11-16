@@ -9,10 +9,12 @@ address = "http://127.0.0.1:19530"
 [redis]
 dsn = "redis://127.0.0.1:6379/"
 
-
 [s3]
 endpoint = "http://127.0.0.1:9000"
 access_key = "minioadmin"
 secret_access_key = "minioadmin"
 bucket_name = "cola-tiger"
 use_ssl= false
+
+[db]
+dns = "postgres://root:123456@127.0.0.1:5432/colatiger?currentSchema=my_schema"

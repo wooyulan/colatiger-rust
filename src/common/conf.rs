@@ -37,6 +37,12 @@ pub struct S3Config {
     pub use_ssl:bool,
 }
 
+///db
+#[derive(Debug, Clone, Deserialize)]
+pub struct DbConfig {
+    pub dns:String,
+}
+
 
 
 /// 项目配置
@@ -46,6 +52,7 @@ pub struct AppConfig {
     pub redis: RedisConfig,
     pub milvus: MilvusConfig,
     pub s3: S3Config,
+    pub db:DbConfig,
 }
 
 
