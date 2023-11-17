@@ -9,7 +9,7 @@ use crate::routers::vector::service;
 pub async fn img2vector(Json(req): Json<ImgEmbedReq>,
 ) -> impl IntoResponse {
 
-    if req.imgs.is_empty() {
+    if req.img.is_empty() {
         return Json(RespVO::<String>::fail_info("图片不能为空"));
     }
     // 开始embeding
@@ -29,7 +29,6 @@ pub async fn img2vector(Json(req): Json<ImgEmbedReq>,
 // 查询图片
 pub async fn search_imgs(Query(params): Query<HashMap<String, String>>) -> impl IntoResponse {
     let query = params.get("search").unwrap();
-
     if query.is_empty() {
         return Json(RespVO::fail_info("查询参数不能为空"));
     }

@@ -3,4 +3,4 @@ mod handler;
 mod service;
 mod model;
 
-pub use api::upload;
+pub use api::oss_router;

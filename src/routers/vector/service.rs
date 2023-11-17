@@ -11,7 +11,7 @@ const URL_TEXT: &str = "http://82.156.138.158:8838/open/api/text2embed";
 // embeding
 pub async fn embed(req: ImgEmbedReq) -> Result<bool, Box<dyn Error>> {
     // 构建参数
-    let params = build_img_param(& req.imgs);
+    let params = build_img_param(& req.img);
     // 发送请求
     let res_data = post(URL_IMG,params).await.unwrap();
     let data = match res_data.get("result") {
@@ -21,7 +21,7 @@ pub async fn embed(req: ImgEmbedReq) -> Result<bool, Box<dyn Error>> {
         }
     };
     // 持久化向量数据
-    let insert = milvus_db::insert_data("text_img_poc", data.to_owned()).await;
+    let insert = milvus_db::insert_data("text_img_poc", data.to_owned(),req.biz_no).await;
     Ok(insert)
 }
 
@@ -42,12 +42,10 @@ pub async fn search(query: &str) ->Result<Vec<i64>, Box<dyn Error>> {
 }
 
 
-pub fn build_img_param<'a>(imgs: &'a Vec<String>) -> HashMap<&'a str, Vec<&'a str>> {
+pub fn build_img_param<'a>(img: &'a String) -> HashMap<&'a str, Vec<&'a str>> {
     let mut params = HashMap::new();
     let mut vec_img = Vec::new();
-    for img in imgs {
-        vec_img.push(img.as_str());
-    }
+    vec_img.push(img.as_str());
     params.insert("imgs", vec_img);
     params
 }

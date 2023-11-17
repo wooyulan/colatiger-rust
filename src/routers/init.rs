@@ -32,8 +32,7 @@ fn auth_init_router() -> Router {
 fn init_router() -> Router {
     let app = Router::new()
         .merge(health::health()) //健康检查
-        .merge(oss::upload()) // 文件上传
-    
+        .merge(oss::oss_router()) // 文件操作
         ;
     return app;
 }

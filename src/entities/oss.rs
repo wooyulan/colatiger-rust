@@ -9,7 +9,9 @@ use sea_orm::DerivePrimaryKey;
 use sea_orm::DeriveRelation;
 use sea_orm::PrimaryKeyTrait;
 use sea_orm::EntityTrait;
-#[derive(Clone, Debug, PartialEq, Eq, DeriveEntityModel, Serialize, Deserialize)]
+use sea_orm::entity::prelude::*;
+
+#[derive(Clone, Debug, PartialEq, Eq,DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "t_oss")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -19,7 +21,7 @@ pub struct Model {
 
     pub oss_path:String, //oss存储路径
 
-    pub key_name:String,  // 新名称
+    pub key_name:i64,  // 新名称
 
     pub is_del: String //是否删除
 }
@@ -42,7 +44,7 @@ impl Model  {
         Self {
             id: snowflake::next_id(),
             ori_name:filename.to_string(),
-            key_name: key.to_string(),
+            key_name: key,
             oss_path: path.to_string(),
             is_del:"N".to_string(),
         }
