@@ -1,6 +1,12 @@
 # colatiger-rust
 axum 实现rust-web
 
+
+## 启动命令
+```
+env=${env} cargo run
+```
+
 ## 代码结构
 
 

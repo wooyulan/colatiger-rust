@@ -4,7 +4,7 @@ name = "colatiger"
 addr = "0.0.0.0:4000"
 
 [milvus]
-address = "http://127.0.0.1:19530"
+address = "http://192.168.87.231:19530"
 
 [redis]
 dsn = "redis://127.0.0.1:6379/"
@@ -13,7 +13,7 @@ dsn = "redis://127.0.0.1:6379/"
 endpoint = "http://127.0.0.1:9000"
 access_key = "minioadmin"
 secret_access_key = "minioadmin"
-bucket_name = "cola-tiger"
+bucket_name = "poc"
 use_ssl= false
 
 [db]

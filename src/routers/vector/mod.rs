@@ -1,7 +1,7 @@
 mod api;
 mod handler;
-mod entity;
-mod service;
+pub mod entity;
+pub mod service;
 mod http_client;
 
 //

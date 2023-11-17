@@ -442,6 +442,7 @@ dependencies = [
 name = "colatiger"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "axum",
  "axum-extra",
  "axum-valid",
@@ -452,6 +453,7 @@ dependencies = [
  "hyper",
  "idgenerator",
  "milvus-sdk-rust",
+ "mime",
  "once_cell",
  "reqwest",
  "rust-s3",

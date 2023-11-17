@@ -56,7 +56,7 @@ pub struct AppConfig {
 
 // 从配置文件中读取配置
 pub fn init_config() -> AppConfig {
-    let run_mode = env::var("mode").unwrap_or_else(|_| "default".into());
+    let run_mode = env::var("env").unwrap_or_else(|_| "default".into());
 
     tracing::info!("start loading {} conf..", run_mode);
 

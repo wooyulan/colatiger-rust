@@ -12,6 +12,7 @@ pub static MILVUS_CLIENT: OnceCell<Client> = OnceCell::new();
 
 const DEFAULT_VEC_FIELD: &str = "embed";
 const DEFAULT_KEY_FIELD: &str = "id";
+const DEFAULT_BIZ_FIELD: &str = "biz_no";
 
 pub async fn init_milvus_client(){
     let conf = AppConfig::get_milvus_conf();
@@ -21,7 +22,7 @@ pub async fn init_milvus_client(){
             client
         }
         Err(e) => {
-            tracing::debug!("Failed to connect to the milvus: {:?}", e);
+            tracing::error!("Failed to connect to the milvus: {:?}", e);
             panic!("Failed to connect to the database for milvus")
         }
     };
@@ -43,11 +44,12 @@ pub async fn get_collection(collection_name: &str) -> Result<Collection, Error> 
 }
 
 // 持久化数据
-pub async fn insert_data(collection_name: &str, data: Vec<Vec<f32>>) -> bool {
+pub async fn insert_data(collection_name: &str, data: Vec<Vec<f32>>,biz_no:i64) -> bool {
     let collection = get_collection( collection_name).await.unwrap();
     // 构建向量存储信息
     let schema: &milvus::schema::FieldSchema = collection.schema().get_field(DEFAULT_VEC_FIELD).unwrap();
     let schema_id: &milvus::schema::FieldSchema = collection.schema().get_field(DEFAULT_KEY_FIELD).unwrap();
+    let schema_biz_id: &milvus::schema::FieldSchema = collection.schema().get_field(DEFAULT_BIZ_FIELD).unwrap();
 
     let mut fields_data = Vec::new();
 
@@ -55,11 +57,16 @@ pub async fn insert_data(collection_name: &str, data: Vec<Vec<f32>>) -> bool {
         let id = snowflake::next_id();
         let id_colum = FieldColumn::new(schema_id, vec![id]);
         let embed_column = FieldColumn::new(schema, temp, );
+        let biz_column=FieldColumn::new(schema_biz_id,vec![biz_no]);
         fields_data.push(id_colum);
         fields_data.push(embed_column);
+        fields_data.push(biz_column);
     }
     let ok =  match collection.insert(fields_data, None).await {
-        Ok(_) => {true}
+        Ok(_) => {
+            tracing::info!("milvus插入数据成功");
+            true
+        }
         Err(err) => {
             tracing::info!("milvus插入数据异常:{}",err);
             false
@@ -74,7 +81,7 @@ pub async fn search_data(collection_name: &str,data:Vec<f32>) -> Vec<i64> {
     let collection = get_collection(collection_name).await.unwrap();
     let mut option = SearchOption::default();
     option.add_param("nprobe", ParamValue!(16));
-    let r = match collection.search(vec![data.into()], DEFAULT_VEC_FIELD, 5, MetricType::L2, vec![DEFAULT_KEY_FIELD],   &option,).await{
+    let r = match collection.search(vec![data.into()], DEFAULT_VEC_FIELD, 5, MetricType::L2, vec![DEFAULT_BIZ_FIELD],   &option,).await{
         Ok(r) =>{
             let temp = r.get(0).unwrap();
             let result = match temp.field.get(0).unwrap().value.clone() {

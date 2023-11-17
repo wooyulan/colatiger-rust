@@ -11,7 +11,7 @@ pub mod postgres;
 
 pub async fn init_db() {
     // 单例 milvus
-   // init_milvus_client().await;
+    init_milvus_client().await;
 
     // 雪花
     init_snowflak();
