@@ -21,7 +21,7 @@ pub async fn embed(req: ImgEmbedReq) -> Result<bool, Box<dyn Error>> {
         }
     };
     // 持久化向量数据
-    let insert = milvus_db::insert_data("test01", data.to_owned()).await;
+    let insert = milvus_db::insert_data("text_img_poc", data.to_owned()).await;
     Ok(insert)
 }
 
@@ -37,7 +37,7 @@ pub async fn search(query: &str) ->Result<Vec<i64>, Box<dyn Error>> {
     };
 
     // 查询数据
-    let result = milvus_db::search_data("test01",data.get(0).unwrap().to_owned()).await;
+    let result = milvus_db::search_data("text_img_poc",data.get(0).unwrap().to_owned()).await;
     Ok(result)
 }
 
