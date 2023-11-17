@@ -13,7 +13,7 @@ dsn = "redis://127.0.0.1:6379/"
 endpoint = "http://127.0.0.1:9000"
 access_key = "minioadmin"
 secret_access_key = "minioadmin"
-bucket_name = "cola-tiger"
+bucket_name = "poc"
 use_ssl= false
 
 [db]

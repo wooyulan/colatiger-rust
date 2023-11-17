@@ -4,7 +4,7 @@ name = "colatiger"
 addr = "0.0.0.0:4000"
 
 [milvus]
-address = "http://192.168.87.231:19530"
+address = "http://82.156.138.158:19530"
 
 [redis]
 dsn = "redis://127.0.0.1:6379/"
@@ -17,5 +17,5 @@ bucket_name = "poc"
 use_ssl= false
 
 [db]
-dns = "postgres://postgres:your-super-secret-and-long-postgres-password@82.156.138.158:5432/poc"
+dns = "postgres://root:123456@127.0.0.1:5432/colatiger"
 
