@@ -3,3 +3,5 @@
 /.vscode
 
 /.idea
+
+/config/dev.toml
