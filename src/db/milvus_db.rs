@@ -5,6 +5,7 @@ use milvus::error::Error;
 use milvus::index::MetricType;
 use milvus::value::ValueVec;
 use once_cell::sync::OnceCell;
+use snafu::{whatever, Whatever};
 use crate::common::conf::AppConfig;
 use crate::db::snowflake;
 
@@ -44,7 +45,7 @@ pub async fn get_collection(collection_name: &str) -> Result<Collection, Error> 
 }
 
 // 持久化数据
-pub async fn insert_data(collection_name: &str, data: Vec<Vec<f32>>,biz_no:i64) -> bool {
+pub async fn insert_data(collection_name: &str, data: Vec<Vec<f32>>, biz_no:i64) -> Result<bool,Whatever> {
     let collection = get_collection( collection_name).await.unwrap();
     // 构建向量存储信息
     let schema: &milvus::schema::FieldSchema = collection.schema().get_field(DEFAULT_VEC_FIELD).unwrap();
@@ -68,16 +69,16 @@ pub async fn insert_data(collection_name: &str, data: Vec<Vec<f32>>,biz_no:i64) 
             true
         }
         Err(err) => {
-            tracing::info!("milvus插入数据异常:{}",err);
-            false
+            tracing::info!("milvus插入数据异常:{:?}",err);
+            whatever!("milvus插入数据异常")
         }
     };
-    ok
+    Ok(ok)
 }
 
 
 // 查询数据
-pub async fn search_data(collection_name: &str,data:Vec<f32>) -> Vec<i64> {
+pub async fn search_data(collection_name: &str,data:Vec<f32>) -> Result<Vec<i64>,Whatever>{
     let collection = get_collection(collection_name).await.unwrap();
     let mut option = SearchOption::default();
     option.add_param("nprobe", ParamValue!(16));
@@ -92,8 +93,8 @@ pub async fn search_data(collection_name: &str,data:Vec<f32>) -> Vec<i64> {
         },
         Err(e) =>{
             tracing::error!("查询异常:{:?}",e);
-            panic!("查询异常")
+            whatever!("查询向量库异常")
         }
     };
-    r
+    Ok(r)
 }

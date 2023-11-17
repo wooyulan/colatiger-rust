@@ -13,7 +13,6 @@ pub async fn post(url: &str,data: HashMap<&str, Vec<&str>>) -> Result<HashMap<St
     let mut headers = HeaderMap::new();
     headers.insert("Content-Type", "application/json".parse().unwrap());
     tracing::info!("请求参数{:?}", data);
-
     // 发起post请求并返回
     Ok(client
         .post(url)

@@ -24,8 +24,6 @@ async fn main() {
     //加载路由
     let app = routers::init::routers();
 
-    // middleware::snowflake::next_id();
-
 
     tracing::info!(
         "{} 启动成功... 当前版本 {},监听地址 {}",
