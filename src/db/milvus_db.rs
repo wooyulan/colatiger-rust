@@ -21,7 +21,7 @@ pub async fn init_milvus_client(){
             client
         }
         Err(e) => {
-            tracing::debug!("Failed to connect to the milvus: {:?}", e);
+            tracing::error!("Failed to connect to the milvus: {:?}", e);
             panic!("Failed to connect to the database for milvus")
         }
     };

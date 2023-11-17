@@ -1,4 +1,3 @@
-mod model;
 mod api;
 mod handler;
 
