@@ -17,4 +17,4 @@ bucket_name = "cola-tiger"
 use_ssl= false
 
 [db]
-dns = "postgres://root:123456@127.0.0.1:5432/colatiger?currentSchema=my_schema"
+dns = "postgres://root:123456@127.0.0.1:5432/colatiger"

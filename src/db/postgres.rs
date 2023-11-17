@@ -19,7 +19,9 @@ pub async fn init_postgres(){
         .sqlx_logging_level(log::LevelFilter::Info); // Setting default PostgreSQL schema
 
     let db = Database::connect(opt).await.unwrap();
+    tracing::info!("Connection to the postgreql is successful!");
     DB.set(db).unwrap()
 }
 
 pub fn get_conn() -> Option<&'static DatabaseConnection> { DB.get() }
+
