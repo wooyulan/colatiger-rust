@@ -453,6 +453,7 @@ dependencies = [
  "hyper",
  "idgenerator",
  "milvus-sdk-rust",
+ "mime",
  "once_cell",
  "reqwest",
  "rust-s3",

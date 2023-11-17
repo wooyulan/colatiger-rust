@@ -64,7 +64,7 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo> {
     Ok(OssVo { priview_url: "".to_string(), key: 0 })
 }
 
-pub(crate) async fn file_query(query: OssQuery) -> Result<Vec<String>> {
+pub async fn file_query(query: OssQuery) -> Result<Vec<String>> {
     let objs = OSS::find()
         .filter(
             Condition::all().add(oss::Column::KeyName.is_in(query.key))

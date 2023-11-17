@@ -9,7 +9,6 @@ use sea_orm::DerivePrimaryKey;
 use sea_orm::DeriveRelation;
 use sea_orm::PrimaryKeyTrait;
 use sea_orm::EntityTrait;
-use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Eq,DeriveEntityModel, Serialize, Deserialize)]
 #[sea_orm(table_name = "t_oss")]
