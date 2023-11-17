@@ -442,7 +442,6 @@ dependencies = [
 name = "colatiger"
 version = "0.1.0"
 dependencies = [
- "anyhow",
  "axum",
  "axum-extra",
  "axum-valid",

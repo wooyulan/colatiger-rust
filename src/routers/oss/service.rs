@@ -1,9 +1,9 @@
 use std::io;
-use anyhow::Result;
 use axum::extract::Multipart;
 use crate::db::s3;
 use futures::TryStreamExt;
 use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter};
+use snafu::{Whatever, whatever};
 use tokio_util::io::StreamReader;
 use oss::Entity as OSS;
 use crate::common::conf::AppConfig;
@@ -15,7 +15,7 @@ use crate::routers::vector;
 use crate::routers::vector::entity::ImgEmbedReq;
 
 
-pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo> {
+pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
     let s3 = AppConfig::get_s3_conf();
 
     while let Some(field) = multipart.next_field().await.unwrap() {
@@ -64,12 +64,17 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo> {
     Ok(OssVo { priview_url: "".to_string(), key: 0 })
 }
 
-pub async fn file_query(query: OssQuery) -> Result<Vec<String>> {
-    let objs = OSS::find()
+pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
+    let objs = match OSS::find()
         .filter(
             Condition::all().add(oss::Column::KeyName.is_in(query.key))
-        ).all(DB.get().unwrap()).await?;
-
+        ).all(DB.get().unwrap()).await{
+        Ok(obj) => obj,
+        Err(e) =>{
+            tracing::error!("文件查询数据库异常:e:{:?}",e);
+            whatever!("文件查询数据库异常{:?}",e);
+        }
+    };
     let s3 = AppConfig::get_s3_conf();
     let mut file_array = Vec::<String>::new();
 
