@@ -1,21 +1,30 @@
-FROM rust:1.73.0 as builder
-RUN USER=root cargo new --bin colatiger
+ARG RUST_VERSION=1.73.0
+
+FROM rust:${RUST_VERSION}-slim-bookworm AS builder
 
 WORKDIR /app
+COPY . .
+RUN \
+  --mount=type=cache,target=/app/target/ \
+  --mount=type=cache,target=/usr/local/cargo/registry/ \
+  cargo build --locked --release && \
+  cp ./target/release/colatiger /app
 
-COPY Cargo.toml Cargo.lock  ./
-
-COPY src ./src
-COPY config ./config
-
-RUN cargo build --release
-
-FROM alpine
-
-WORKDIR /
-
-ENV ROCKET_ADDRESS=0.0.0.0
-ENV ROCKET_PORT=3000
-
-
-CMD ["/colatiger"]
+FROM debian:bookworm-slim AS final
+RUN adduser \
+  --disabled-password \
+  --gecos "" \
+  --home "/nonexistent" \
+  --shell "/sbin/nologin" \
+  --no-create-home \
+  --uid "10001" \
+  appuser
+COPY --from=builder /app/colatiger /usr/local/bin
+RUN chown appuser /usr/local/bin/colatiger
+COPY --from=builder /app/config /opt/colatiger/config
+RUN chown -R appuser /opt/colatiger/config
+USER appuser
+ENV RUST_LOG="colatiger=debug,tower_http=debug,info"
+WORKDIR /opt/colatiger
+ENTRYPOINT ["colatiger"]
+EXPOSE 8080/tcp
