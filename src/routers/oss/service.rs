@@ -64,7 +64,7 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
 
             let img_url = vo.priview_url.to_owned();
             // 调用图片识别
-            _ = match remote::post("http://127.0.0.1:8000/open/v1/img",img_url).await {
+            _ = match remote::post("http://vgg:5050/open/v1/img",img_url).await {
                 Ok(obj) => {
                     // 更新数据库
                     let mut up_model = oss_model.to_owned().into_active_model();
