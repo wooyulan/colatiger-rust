@@ -35,7 +35,7 @@ pipeline {
 
                     sh 'echo "$DOCKER_PASSWORD" | docker login $REGISTRY -u "$DOCKER_USERNAME" --password-stdin'
 
-                    sh ' docker build --build-arg "HTTP_PROXY=http://10.4.14.22:7890" --build-arg "HTTPS_PROXY=http://10.4.14.22:7890" -f Dockerfile -t $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER . --network=host '
+                    sh ' docker build  -f Dockerfile -t $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER . --network=host '
 
                     sh 'docker push  $REGISTRY/$DOCKERHUB_NAMESPACE/$APP_NAME:SNAPSHOT-$BRANCH_NAME-$BUILD_NUMBER'
 
