@@ -17,5 +17,5 @@ bucket_name = "poc"
 use_ssl= false
 
 [db]
-dns = "postgres://root:123456@127.0.0.1:5432/colatiger"
+dns = "postgres://postgres:thundersoft88@192.168.86.5:5432/poc-img"
 
