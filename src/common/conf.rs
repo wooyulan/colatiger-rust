@@ -90,6 +90,10 @@ impl AppConfig {
     pub fn get_web_conf()-> WebConfig  {
         get().unwrap().web.to_owned()
     }
+
+    pub fn get_redis_conf()-> RedisConfig  {
+        get().unwrap().redis.to_owned()
+    }
 }
 
 
