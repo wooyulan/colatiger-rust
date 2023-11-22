@@ -106,8 +106,8 @@ pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
 
 
 pub async fn query_page(params:PageQuery) -> Result<PageResult<Model>,Whatever> {
-    let page = params.page_no(); // 当前页码
-    let page_size = params.page_size(); // 每页条数，默认15
+    let page = params.page_no();
+    let page_size = params.page_size();
 
     let paginator = OSS::find().paginate(DB.get().unwrap(),page_size);
 
@@ -115,7 +115,7 @@ pub async fn query_page(params:PageQuery) -> Result<PageResult<Model>,Whatever> 
     let items = paginator.fetch_page(page).await.unwrap();
 
     let result = PageResult {
-        page_query: params,
+        params: params,
         data:items,
         total:total,
     };

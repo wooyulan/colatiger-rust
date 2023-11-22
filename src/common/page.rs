@@ -24,7 +24,7 @@ impl PageQuery {
 
 #[derive(Debug,Clone, Serialize,Deserialize)]
 pub struct PageResult<T> {
-    pub page_query: PageQuery,
+    pub params: PageQuery,
     pub total: u64,
     pub data: Vec<T>
 }
