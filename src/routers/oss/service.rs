@@ -2,7 +2,8 @@ use std::io;
 use axum::extract::Multipart;
 use crate::db::s3;
 use futures::TryStreamExt;
-use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter};
+use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter, ActiveModelTrait};
+use sea_orm::ActiveValue::Set;
 use snafu::{Whatever, whatever};
 use tokio_util::io::StreamReader;
 use oss::Entity as OSS;
@@ -11,6 +12,7 @@ use crate::db::postgres::DB;
 use crate::entities::oss;
 use crate::routers::oss::model::{OssQuery, OssVo};
 use crate::entities::oss::Model;
+use crate::routers::oss::remote;
 use crate::routers::vector;
 use crate::routers::vector::entity::ImgEmbedReq;
 
@@ -48,8 +50,9 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
             key: oss_model.key_name,
         };
 
-        // 如果是图片 调用embeding
+        // 如果是图片 调用embedding
         if content_type.starts_with("image") {
+            // 调用embedding
             let thread_vo = vo.clone();
             tokio::spawn(async move {
                 vector::service::embed(ImgEmbedReq {
@@ -57,6 +60,21 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
                     biz_no: thread_vo.key,
                 }).await.unwrap()
             }).await.unwrap();
+
+            let img_url = vo.priview_url.to_owned();
+            // 调用图片识别
+            _ = match remote::post("http://127.0.0.1:8000/open/v1/img",img_url).await {
+                Ok(obj) => {
+                    // 更新数据库
+                    let mut up_model = oss_model.to_owned().into_active_model();
+                    up_model.file_type = Set(obj.get("type").unwrap().to_string());
+                    up_model.update(DB.get().unwrap()).await.unwrap();
+                },
+                Err(e) => {
+                    tracing::error!("{:?}",e);
+                    whatever!("图拍分类异常")
+                }
+            };
         }
 
         return Ok(vo);

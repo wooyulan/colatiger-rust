@@ -1,30 +1,44 @@
-ARG RUST_VERSION=1.73.0
+FROM rust:1.73.0 as builder
 
-FROM rust:${RUST_VERSION}-slim-bookworm AS builder
+RUN USER=root cargo new --bin colatiger
+WORKDIR /colatiger
+COPY ./Cargo.toml ./Cargo.toml
+# Build empty app with downloaded dependencies to produce a stable image layer for next build
+RUN cargo build --release
 
-WORKDIR /app
-COPY . .
-RUN \
-  --mount=type=cache,target=/app/target/ \
-  --mount=type=cache,target=/usr/local/cargo/registry/ \
-  cargo build --locked --release && \
-  cp ./target/release/colatiger /app
+# Build web app with own code
+RUN rm src/*.rs
+ADD . ./
+RUN rm ./target/release/deps/colatiger*
+RUN cargo build --release
 
-FROM debian:bookworm-slim AS final
-RUN adduser \
-  --disabled-password \
-  --gecos "" \
-  --home "/nonexistent" \
-  --shell "/sbin/nologin" \
-  --no-create-home \
-  --uid "10001" \
-  appuser
-COPY --from=builder /app/colatiger /usr/local/bin
-RUN chown appuser /usr/local/bin/colatiger
-COPY --from=builder /app/config /opt/colatiger/config
-RUN chown -R appuser /opt/colatiger/config
-USER appuser
-ENV RUST_LOG="colatiger=debug,tower_http=debug,info"
-WORKDIR /opt/colatiger
-ENTRYPOINT ["colatiger"]
-EXPOSE 8080/tcp
+
+FROM debian:latest
+
+ARG APP=/usr/src/app
+
+
+RUN apt-get update \
+    && apt install -y protobuf-compiler \
+    && apt-get install -y ca-certificates tzdata \
+    && rm -rf /var/lib/apt/lists/* 
+
+EXPOSE 3000
+
+ENV TZ=Etc/UTC \
+    APP_USER=appuser
+
+RUN groupadd $APP_USER \
+    && useradd -g $APP_USER $APP_USER \
+    && mkdir -p ${APP}
+
+COPY --from=builder /colatiger/target/release/colatiger ${APP}/colatiger
+COPY --from=builder /colatiger/config ${APP}/config
+
+RUN chown -R $APP_USER:$APP_USER ${APP}
+
+USER $APP_USER
+WORKDIR ${APP}
+
+ENV mode=dev
+CMD ["env=$mode ./colatiger"]
