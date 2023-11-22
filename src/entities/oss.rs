@@ -22,7 +22,9 @@ pub struct Model {
 
     pub key_name:i64,  // 新名称
 
-    pub is_del: String //是否删除
+    pub is_del: String, //是否删除
+
+    pub file_type: String, // 文件类型
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -46,6 +48,7 @@ impl Model  {
             key_name: key,
             oss_path: path.to_string(),
             is_del:"N".to_string(),
+            file_type: "other".to_string(),
         }
     }
 }

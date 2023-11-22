@@ -2,15 +2,18 @@ use std::io;
 use axum::extract::Multipart;
 use crate::db::s3;
 use futures::TryStreamExt;
-use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter};
+use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter, ActiveModelTrait, PaginatorTrait};
+use sea_orm::ActiveValue::Set;
 use snafu::{Whatever, whatever};
 use tokio_util::io::StreamReader;
 use oss::Entity as OSS;
 use crate::common::conf::AppConfig;
+use crate::common::page::{PageQuery,PageResult};
 use crate::db::postgres::DB;
 use crate::entities::oss;
 use crate::routers::oss::model::{OssQuery, OssVo};
 use crate::entities::oss::Model;
+use crate::routers::oss::remote;
 use crate::routers::vector;
 use crate::routers::vector::entity::ImgEmbedReq;
 
@@ -48,8 +51,9 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
             key: oss_model.key_name,
         };
 
-        // 如果是图片 调用embeding
+        // 如果是图片 调用embedding
         if content_type.starts_with("image") {
+            // 调用embedding
             let thread_vo = vo.clone();
             tokio::spawn(async move {
                 vector::service::embed(ImgEmbedReq {
@@ -57,6 +61,21 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
                     biz_no: thread_vo.key,
                 }).await.unwrap()
             }).await.unwrap();
+
+            let img_url = vo.priview_url.to_owned();
+            // 调用图片识别
+            _ = match remote::post("http://vgg:5050/open/v1/img",img_url).await {
+                Ok(obj) => {
+                    // 更新数据库
+                    let mut up_model = oss_model.to_owned().into_active_model();
+                    up_model.file_type = Set(obj.get("type").unwrap().to_string());
+                    up_model.update(DB.get().unwrap()).await.unwrap();
+                },
+                Err(e) => {
+                    tracing::error!("{:?}",e);
+                    whatever!("图拍分类异常")
+                }
+            };
         }
 
         return Ok(vo);
@@ -82,4 +101,24 @@ pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
         file_array.push(format!("{}/{}/{}", s3.endpoint, s3.bucket_name, obj.oss_path))
     }
     Ok(file_array)
+}
+
+
+
+pub async fn query_page(params:PageQuery) -> Result<PageResult<Model>,Whatever> {
+    let page = params.page_no();
+    let page_size = params.page_size();
+
+    let paginator = OSS::find().paginate(DB.get().unwrap(),page_size);
+
+    let total = paginator.num_pages().await.unwrap();
+    let items = paginator.fetch_page(page).await.unwrap();
+
+    let result = PageResult {
+        params: params,
+        data:items,
+        total:total,
+    };
+
+    Ok(result)
 }

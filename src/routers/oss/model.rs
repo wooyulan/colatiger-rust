@@ -12,3 +12,4 @@ pub struct OssVo {
 pub struct OssQuery{
     pub key: Vec<i64>,
 }
+
