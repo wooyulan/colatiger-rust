@@ -2,12 +2,13 @@ use std::io;
 use axum::extract::Multipart;
 use crate::db::s3;
 use futures::TryStreamExt;
-use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter, ActiveModelTrait};
+use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter, ActiveModelTrait, PaginatorTrait};
 use sea_orm::ActiveValue::Set;
 use snafu::{Whatever, whatever};
 use tokio_util::io::StreamReader;
 use oss::Entity as OSS;
 use crate::common::conf::AppConfig;
+use crate::common::page::{PageQuery,PageResult};
 use crate::db::postgres::DB;
 use crate::entities::oss;
 use crate::routers::oss::model::{OssQuery, OssVo};
@@ -100,4 +101,24 @@ pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
         file_array.push(format!("{}/{}/{}", s3.endpoint, s3.bucket_name, obj.oss_path))
     }
     Ok(file_array)
+}
+
+
+
+pub async fn query_page(params:PageQuery) -> Result<PageResult<Model>,Whatever> {
+    let page = params.page_no(); // 当前页码
+    let page_size = params.page_size(); // 每页条数，默认15
+
+    let paginator = OSS::find().paginate(DB.get().unwrap(),page_size);
+
+    let total = paginator.num_pages().await.unwrap();
+    let items = paginator.fetch_page(page).await.unwrap();
+
+    let result = PageResult {
+        page_query: params,
+        data:items,
+        total:total,
+    };
+
+    Ok(result)
 }
