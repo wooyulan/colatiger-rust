@@ -33,11 +33,11 @@ fn auth_init_router() -> Router {
         .merge(auth::auth_router()) // 认证模块
         .merge(vector::vector_router()) // 向量模块
         .merge(llm::llm_router()) //AI LLM
-        .layer(JwtAuth::<model::Claims>::new(vec!["/login"]))
-        // 拦截器拦截黑名单 ip 访问
-        .layer(interceptor::blacklist_vec(vec!["127.0.0.1"]))
-        // 访问日志记录
-        .layer(Logger::default())
+        // .layer(JwtAuth::<model::Claims>::new(vec!["/login"]))
+        // // 拦截器拦截黑名单 ip 访问
+        // .layer(interceptor::blacklist_vec(vec!["127.0.0.1"]))
+        // // 访问日志记录
+        // .layer(Logger::default())
         ;
     return app;
 }

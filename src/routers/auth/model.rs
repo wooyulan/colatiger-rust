@@ -1,11 +1,10 @@
 use mll_axum_utils::middleware::jwt::JwtToken;
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Default, Validate, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default,Serialize, Deserialize)]
 struct User {
     uid: u64,
     // 数据验证
-    #[validate(length(min = 3, max = 24, message = "用户名长度必须在3-24之间"))]
     name: String,
 }
 
