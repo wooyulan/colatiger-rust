@@ -48,7 +48,7 @@ pub fn get_s3_bucket() -> Option<&'static Bucket> { S3.get() }
 // 上传文件
 pub async fn put_file(filename: &str,mut reader: Pin<&mut (dyn AsyncRead + Send)>){
    let bucket = get_s3_bucket().unwrap();
-   let _ =bucket.put_object_stream(&mut reader, &filename).await;
+   let _= bucket.put_object_stream(&mut reader, &filename).await;
 }
 
 
