@@ -1,5 +1,5 @@
 use std::ffi::OsStr;
-use chrono::{Datelike, Utc};
+use chrono::{Datelike, Local, NaiveDateTime, Utc};
 use std::path::Path;
 use sea_orm::{ActiveModelBehavior, DeriveEntityModel};
 use serde::{Deserialize, Serialize};
@@ -25,6 +25,10 @@ pub struct Model {
     pub is_del: String, //是否删除
 
     pub file_type: String, // 文件类型
+
+    pub created_at: NaiveDateTime, // 创建时间
+
+    pub file_size: i32,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -49,6 +53,8 @@ impl Model  {
             oss_path: path.to_string(),
             is_del:"N".to_string(),
             file_type: "other".to_string(),
+            created_at: Local::now().naive_local(),
+            file_size: 0,
         }
     }
 }

@@ -1,10 +1,12 @@
+use chrono::NaiveDateTime;
 use serde::{Deserialize, Serialize};
 
 // 文件上传返回
 #[derive(Debug,Clone, Serialize,Deserialize)]
 pub struct OssVo {
-    pub priview_url: String,
-    pub key: i64
+    pub preview_url: String,
+    pub key: i64,
+    pub created_at: NaiveDateTime,
 }
 
 /// 文件查询

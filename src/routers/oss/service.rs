@@ -47,8 +47,9 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
 
         // 构造返回体
         let vo = OssVo {
-            priview_url: format!("{}/{}/{}", s3.endpoint, s3.bucket_name, oss_model.oss_path),
+            preview_url: format!("{}/{}/{}", s3.endpoint, s3.bucket_name, oss_model.oss_path),
             key: oss_model.key_name,
+            created_at: oss_model.created_at,
         };
 
         // 如果是图片 调用embedding
@@ -57,12 +58,12 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
             let thread_vo = vo.clone();
             tokio::spawn(async move {
                 vector::service::embed(ImgEmbedReq {
-                    img: thread_vo.priview_url,
+                    img: thread_vo.preview_url,
                     biz_no: thread_vo.key,
                 }).await.unwrap()
             }).await.unwrap();
 
-            let img_url = vo.priview_url.to_owned();
+            let img_url = vo.preview_url.to_owned();
             // 调用图片识别
             _ = match remote::post("http://vgg:5050/open/v1/img",img_url).await {
                 Ok(obj) => {
@@ -80,7 +81,11 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
 
         return Ok(vo);
     };
-    Ok(OssVo { priview_url: "".to_string(), key: 0 })
+    Ok(OssVo{
+        preview_url: "".to_string(),
+        key: 0,
+        created_at: Default::default(),
+    })
 }
 
 pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
