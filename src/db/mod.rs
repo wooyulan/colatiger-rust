@@ -2,7 +2,6 @@ use milvus_db::init_milvus_client;
 use snowflake::init_snowflak;
 use s3::init_s3;
 use postgres::init_postgres;
-use redis::init_redis;
 
 pub mod milvus_db;
 pub mod snowflake;
@@ -25,6 +24,6 @@ pub async fn init_db() {
     init_postgres().await;
 
     // 连接redis
-    init_redis().await;
+    // init_redis().await;
 
 }
