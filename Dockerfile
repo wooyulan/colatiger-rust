@@ -1,4 +1,4 @@
-FROM 192.168.87.183:8443/llm-poc/poc/rust:1.73.0
+FROM rust:1.73.0 as builder
 
 RUN apt-get update \
   && apt-get install -y protobuf-compiler \
@@ -13,8 +13,7 @@ RUN cargo build --release
 RUN rm ./target/release/deps/colatiger*
 RUN cp ./target/release/colatiger /app
 
-FROM 192.168.87.183:8443/llm-poc/poc/debian:latest
-
+FROM debian:latest
 RUN apt-get update \
   && apt-get install -y openssl \
   && rm -rf /var/lib/apt/lists/*
