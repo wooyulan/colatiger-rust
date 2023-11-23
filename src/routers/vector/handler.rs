@@ -27,7 +27,7 @@ pub async fn img2vector(Json(req): Json<ImgEmbedReq>,
 
 // 查询图片
 pub async fn search_imgs(Query(params): Query<HashMap<String, String>>) -> RespVO<Vec<String>> {
-    let query = params.get("search").unwrap();
+    let query = params.get("keyword").unwrap();
     if query.is_empty() {
         return RespVO::fail_info("查询参数不能为空");
     }

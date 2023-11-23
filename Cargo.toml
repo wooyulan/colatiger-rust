@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = { version = "0.6.20" ,features = ["multipart"]}
+axum = { version = "0.6.20" ,features = ["multipart","headers"]}
 axum-extra = "0.8.0"
 axum-valid = "0.11.0"
 chrono = "0.4.31"
@@ -32,4 +32,3 @@ mime = "0.3.17"
 redis = "0.23.3"
 tokio-stream = "0.1.14"
 futures-util = "0.3.29"
-mll-axum-utils = "0.1.22"

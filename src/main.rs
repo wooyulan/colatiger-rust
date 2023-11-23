@@ -1,9 +1,7 @@
-
 use dotenv;
 use colatiger::common::conf::{APP_CONFIG, init_config};
 use colatiger::routers;
 use colatiger::db;
-
 
 #[tokio::main]
 async fn main() {
@@ -20,10 +18,8 @@ async fn main() {
 
     // 初始化数据库
     db::init_db().await;
-
     //加载路由
     let app = routers::init::routers();
-
 
     tracing::info!(
         "{} 启动成功... 当前版本 {},监听地址 {}",

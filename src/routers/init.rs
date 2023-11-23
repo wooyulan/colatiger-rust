@@ -1,52 +1,33 @@
+use axum::http::Request;
+use axum::middleware::{from_fn, Next};
+use axum::response::Response;
 use axum::Router;
-use axum::routing::MethodRouter;
-
-use mll_axum_utils::middleware::interceptor;
-use mll_axum_utils::middleware::jwt::JwtAuth;
-use mll_axum_utils::middleware::logger::Logger;
-
-use auth::model;
-
 use super::{auth, health};
 use super::vector;
 use super::oss;
 use super::llm;
 
-
-
-
-
-//构建路由公共方法
-pub fn handle_router(path: String, method_router: MethodRouter) -> Router {
-    Router::new().route(path.as_str(), method_router)
-}
-
 //api
 pub fn routers() -> Router {
-    auth_init_router().merge(init_router())
+
+    Router::new()
+        .nest("/api/v1",auth::auth_router())
+        .nest("/api/v1",health::health())
+        .nest("/api/v1",vector::vector_router())
+        .nest("/api/v1",oss::oss_router())
+        .nest("/api/v1",llm::llm_router())
+        .layer(from_fn(cors))
+
 }
 
 
-//需要权限认证的路由
-fn auth_init_router() -> Router {
-    let app = Router::new()
-        .merge(auth::auth_router()) // 认证模块
-        .merge(vector::vector_router()) // 向量模块
-        .merge(llm::llm_router()) //AI LLM
-        // .layer(JwtAuth::<model::Claims>::new(vec!["/login"]))
-        // // 拦截器拦截黑名单 ip 访问
-        // .layer(interceptor::blacklist_vec(vec!["127.0.0.1"]))
-        // // 访问日志记录
-        // .layer(Logger::default())
-        ;
-    return app;
-}
 
-//不需要权限认证的路由
-fn init_router() -> Router {
-    let app = Router::new()
-        .merge(health::health()) //健康检查
-        .merge(oss::oss_router()) // 文件操作
-        ;
-    return app;
+async fn cors<B>(request: Request<B>, next: Next<B>) -> Response {
+    let mut response = next.run(request).await;
+    let headers = response.headers_mut();
+    headers.insert("Access-Control-Request-Method", "*".parse().unwrap());
+    headers.insert("Access-Control-Allow-Methods", "*".parse().unwrap());
+    headers.insert("Access-Control-Allow-Headers", "*".parse().unwrap());
+    headers.insert("Access-Control-Allow-Credentials", "true".parse().unwrap());
+    response
 }
