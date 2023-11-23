@@ -1,6 +1,6 @@
 use std::string::ToString;
 use axum::Router;
-use axum::routing::{get, post};
+use axum::routing::get;
 use crate::routers::init::handle_router;
 use crate::routers::llm::handler::chat_stream;
 
