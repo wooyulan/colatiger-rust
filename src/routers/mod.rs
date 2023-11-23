@@ -40,3 +40,4 @@ mod health;
 mod vector;
 mod oss;
 mod auth;
+mod llm;
