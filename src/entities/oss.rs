@@ -38,7 +38,7 @@ impl ActiveModelBehavior for ActiveModel {}
 
 
 impl Model  {
-    pub fn builder(filename: &str) -> Self {
+    pub fn builder(filename: &str, size: usize) -> Self {
         let now = Utc::now();
         let date_string = format!("{}{}{}", now.year(), now.month(), now.day());
         let path = Path::new(filename);
@@ -54,7 +54,7 @@ impl Model  {
             is_del:"N".to_string(),
             file_type: "other".to_string(),
             created_at: Local::now().naive_local(),
-            file_size: 0,
+            file_size: size as i32,
         }
     }
 }

@@ -4,6 +4,7 @@ use s3::region::Region;
 use s3::creds::Credentials;
 use crate::common::conf::AppConfig;
 use std:: pin::Pin;
+use axum::body::Bytes;
 use tokio::io::AsyncRead;
 
 pub static S3: OnceCell<Bucket> = OnceCell::new();
@@ -45,10 +46,15 @@ pub async fn init_s3() {
 pub fn get_s3_bucket() -> Option<&'static Bucket> { S3.get() }
 
 
-// 上传文件
-pub async fn put_file(filename: &str,mut reader: Pin<&mut (dyn AsyncRead + Send)>){
+// 上传文件流
+pub async fn put_file_stream(filename: &str,mut reader: Pin<&mut (dyn AsyncRead + Send)>){
    let bucket = get_s3_bucket().unwrap();
    let _= bucket.put_object_stream(&mut reader, &filename).await;
+}
+// 文件上传
+pub async fn put_file(filename: &str, data: Bytes) {
+   let bucket = get_s3_bucket().unwrap();
+   let _ = bucket.put_object(filename, &*data.to_owned()).await;
 }
 
 
