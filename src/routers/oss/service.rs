@@ -1,11 +1,8 @@
-use std::io;
 use axum::extract::Multipart;
 use crate::db::s3;
-use futures::TryStreamExt;
 use sea_orm::{Condition, ColumnTrait, EntityTrait, IntoActiveModel, QueryFilter, ActiveModelTrait, PaginatorTrait};
 use sea_orm::ActiveValue::Set;
 use snafu::{Whatever, whatever};
-use tokio_util::io::StreamReader;
 use oss::Entity as OSS;
 use crate::common::conf::AppConfig;
 use crate::common::page::{PageQuery,PageResult};
@@ -30,16 +27,20 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
 
         //文件类型
         let content_type = field.content_type().unwrap().to_string();
-
         tracing::info!("文件类型为{:?}",content_type);
 
+        let data = field.bytes().await.unwrap();
 
-        let body_with_io_error = field.map_err(|err| io::Error::new(io::ErrorKind::Other, err));
-        let body_reader = StreamReader::new(body_with_io_error);
-        futures::pin_mut!(body_reader);
 
-        let oss_model = Model::builder(&filename);
-        s3::put_file(&oss_model.oss_path, body_reader).await;
+
+        // let body_with_io_error = field.map_err(|err| io::Error::new(io::ErrorKind::Other, err));
+        // let body_reader = StreamReader::new(body_with_io_error);
+        // futures::pin_mut!(body_reader);
+
+        let oss_model = Model::builder(&filename,data.len());
+        // s3::put_file_stream(&oss_model.oss_path, body_reader).await;
+
+        s3::put_file(&oss_model.oss_path,data).await;
 
         // 存储数据库
         let active_oss = oss_model.to_owned().into_active_model();
