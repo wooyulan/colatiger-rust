@@ -51,6 +51,7 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
             preview_url: format!("{}/{}/{}", s3.endpoint, s3.bucket_name, oss_model.oss_path),
             key: oss_model.key_name,
             created_at: oss_model.created_at,
+            file_size: oss_model.file_size.to_owned(),
         };
 
         // 如果是图片 调用embedding
@@ -85,6 +86,7 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
     Ok(OssVo{
         preview_url: "".to_string(),
         key: 0,
+        file_size:0,
         created_at: Default::default(),
     })
 }
