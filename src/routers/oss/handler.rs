@@ -20,7 +20,7 @@ pub async fn file_upload(multipart: Multipart) -> RespVO<OssVo> {
 }
 
 
-pub async fn file_query(Json(req): Json<OssQuery>,)-> RespVO<Vec<String>>{
+pub async fn file_query(Json(req): Json<OssQuery>,)-> RespVO<Vec<OssVo>>{
     let result = service::file_query(req).await;
     match result {
         Ok(x) =>  RespVO::ok(x),

@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use crate::common::resp::RespVO;
 use axum::extract::Query;
 use crate::routers::oss;
-use crate::routers::oss::model::OssQuery;
+use crate::routers::oss::model::{OssQuery, OssVo};
 use crate::routers::vector::entity::ImgEmbedReq;
 use crate::routers::vector::service;
 use axum::Json;
@@ -26,7 +26,7 @@ pub async fn img2vector(Json(req): Json<ImgEmbedReq>,
 
 
 // 查询图片
-pub async fn search_imgs(Query(params): Query<HashMap<String, String>>) -> RespVO<Vec<String>> {
+pub async fn search_imgs(Query(params): Query<HashMap<String, String>>) -> RespVO<Vec<OssVo>> {
     let query = params.get("keyword").unwrap();
     if query.is_empty() {
         return RespVO::fail_info("查询参数不能为空");

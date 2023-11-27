@@ -91,7 +91,7 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
     })
 }
 
-pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
+pub async fn file_query(query: OssQuery) -> Result<Vec<OssVo>,Whatever> {
     let objs = match OSS::find()
         .filter(
             Condition::all().add(oss::Column::KeyName.is_in(query.key))
@@ -103,10 +103,12 @@ pub async fn file_query(query: OssQuery) -> Result<Vec<String>,Whatever> {
         }
     };
     let s3 = AppConfig::get_s3_conf();
-    let mut file_array = Vec::<String>::new();
+    let mut file_array = Vec::<OssVo>::new();
 
     for obj in objs {
-        file_array.push(format!("{}/{}/{}", s3.endpoint, s3.bucket_name, obj.oss_path))
+        let mut vo = OssVo::convert(obj);
+        vo.preview_url = format!("{}/{}/{}", s3.endpoint, s3.bucket_name, vo.preview_url);
+        file_array.push(vo);
     }
     Ok(file_array)
 }
