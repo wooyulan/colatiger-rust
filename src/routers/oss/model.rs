@@ -7,6 +7,7 @@ pub struct OssVo {
     pub preview_url: String,
     pub key: i64,
     pub created_at: NaiveDateTime,
+    pub file_size: i32,
 }
 
 /// 文件查询
