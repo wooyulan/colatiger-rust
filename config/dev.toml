@@ -4,12 +4,15 @@ name = "colatiger"
 addr = "0.0.0.0:4000"
 
 [milvus]
+flag =  false
 address = "http://82.156.138.158:19530"
 
 [redis]
+flag =  false
 dsn = "redis://127.0.0.1:6380/"
 
 [s3]
+flag =  false
 endpoint = "http://82.156.138.158:9000"
 access_key = "minioadmin"
 secret_access_key = "minioadmin"
@@ -17,5 +20,6 @@ bucket_name = "poc"
 use_ssl= false
 
 [db]
+flag =  false
 dns = "postgres://postgres:thundersoft88@192.168.86.5:5432/poc-img"
 

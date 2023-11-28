@@ -83,12 +83,7 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
 
         return Ok(vo);
     };
-    Ok(OssVo{
-        preview_url: "".to_string(),
-        key: 0,
-        file_size:0,
-        created_at: Default::default(),
-    })
+    Ok(OssVo::empty())
 }
 
 pub async fn file_query(query: OssQuery) -> Result<Vec<OssVo>,Whatever> {

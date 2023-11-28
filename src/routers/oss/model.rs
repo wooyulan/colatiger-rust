@@ -20,6 +20,16 @@ impl OssVo {
             file_size: obj.file_size 
         }
     }
+
+    pub fn empty() -> Self {
+        Self {        
+            preview_url: "".to_string(),
+            key: 0,
+            file_size:0,
+            created_at: Default::default(),
+        }
+    }
+
 }
 
 
