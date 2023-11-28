@@ -31,8 +31,6 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
 
         let data = field.bytes().await.unwrap();
 
-
-
         // let body_with_io_error = field.map_err(|err| io::Error::new(io::ErrorKind::Other, err));
         // let body_reader = StreamReader::new(body_with_io_error);
         // futures::pin_mut!(body_reader);
@@ -53,34 +51,6 @@ pub async fn file_upload(mut multipart: Multipart) -> Result<OssVo, Whatever> {
             created_at: oss_model.created_at,
             file_size: oss_model.file_size.to_owned(),
         };
-
-        // 如果是图片 调用embedding
-        if content_type.starts_with("image") {
-            // 调用embedding
-            let thread_vo = vo.clone();
-            tokio::spawn(async move {
-                vector::service::embed(ImgEmbedReq {
-                    img: thread_vo.preview_url,
-                    biz_no: thread_vo.key,
-                }).await.unwrap()
-            }).await.unwrap();
-
-            let img_url = vo.preview_url.to_owned();
-            // 调用图片识别
-            _ = match remote::post("http://vgg:5050/open/v1/img",img_url).await {
-                Ok(obj) => {
-                    // 更新数据库
-                    let mut up_model = oss_model.to_owned().into_active_model();
-                    up_model.file_type = Set(obj.get("type").unwrap().to_string());
-                    up_model.update(DB.get().unwrap()).await.unwrap();
-                },
-                Err(e) => {
-                    tracing::error!("{:?}",e);
-                    whatever!("图拍分类异常")
-                }
-            };
-        }
-
         return Ok(vo);
     };
     Ok(OssVo::empty())
