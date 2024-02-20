@@ -12,8 +12,8 @@ COPY . .
 RUN cargo build --release
 RUN rm ./target/release/deps/colatiger*
 RUN cp ./target/release/colatiger /app
-
 FROM debian:latest
+
 RUN apt-get update \
   && apt-get install -y openssl \
   && rm -rf /var/lib/apt/lists/*
